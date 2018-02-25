@@ -11,7 +11,8 @@ iptables -P FORWARD ACCEPT
 /sbin/sysctl -p /etc/sysctl.d/k8s.conf
 
 export KUBE_REPO_PREFIX=container-registry.oracle.com/kubernetes
-cat /vagrant/my_password.txt | docker login --username ${USERNAME} --password-stdin container-registry.oracle.com
+USERNAME=$(cat /vagrant/my_username)
+cat /vagrant/my_password | docker login --username ${USERNAME} --password-stdin container-registry.oracle.com
 
 kubeadm-setup.sh up --apiserver-advertise-address 10.0.18.10
 

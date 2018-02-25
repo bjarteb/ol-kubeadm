@@ -10,7 +10,8 @@ yum install -y kubeadm
 iptables -P FORWARD ACCEPT
 /sbin/sysctl -p /etc/sysctl.d/k8s.conf
 
-cat /vagrant/my_password.txt | docker login --username ${USERNAME} --password-stdin container-registry.oracle.com
+USERNAME=$(cat /vagrant/my_username)
+cat /vagrant/my_password | docker login --username ${USERNAME} --password-stdin container-registry.oracle.com
 # join cluster
 TOKEN=$(cat /vagrant/token)
 CA_CERT_HASH=$(cat /vagrant/ca-cert-hash)
