@@ -18,3 +18,11 @@ kubeadm-setup.sh up --apiserver-advertise-address 10.0.18.10
 
 kubeadm token list | awk 'NR==2 { print $1; }' > /vagrant/token
 openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //' > /vagrant/ca-cert-hash
+
+# create flannel script to replace the flannel pods
+cat > flannel.sh <<EOF
+#!/bin/sh
+export KUBECONFIG=$(pwd)/admin.conf
+curl -sL https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml |sed "/kube-subnet-mgr/a\        - --iface=eth1" | kubectl replace -f -
+EOF
+chmod +x flannel.sh
