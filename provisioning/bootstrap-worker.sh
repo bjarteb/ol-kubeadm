@@ -16,3 +16,6 @@ cat /vagrant/my_password | docker login --username ${USERNAME} --password-stdin 
 TOKEN=$(cat /vagrant/token)
 CA_CERT_HASH=$(cat /vagrant/ca-cert-hash)
 export KUBE_REPO_PREFIX=container-registry.oracle.com/kubernetes& kubeadm-setup.sh join --token $TOKEN 10.0.18.10:6443 --discovery-token-ca-cert-hash sha256:${CA_CERT_HASH}
+
+/sbin/ip route add 10.96.0.0/12 dev eth1
+echo 10.96.0.0/12 > /etc/sysconfig/network-scripts/route-eth1
