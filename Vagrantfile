@@ -54,7 +54,7 @@ MSG
       node.vm.network :private_network, ip: "10.0.18.2#{i}"
       node.vm.network "forwarded_port", guest: 80, host: "908#{i}"
       node.vm.provider "virtualbox" do |vb|
-        vb.customize ["modifyvm", :id, "--memory", 512]
+        vb.customize ["modifyvm", :id, "--memory", 1024]
         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       end
       node.vm.provision :shell, path: "provisioning/bootstrap-worker.sh"
