@@ -7,4 +7,4 @@ kubectl delete clusterrolebinding flannel -n kube-system
 kubectl delete clusterrole flannel -n kube-system
 kubectl delete daemonset kube-flannel-ds -n kube-system
 # deploy flannel
-curl -sL https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml |awk '1;/kube-subnet-mgr/{ print "        - --iface=eth1";}' | kubectl replace -f -
+curl -sL https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml |awk '1;/kube-subnet-mgr/{ print "        - --iface=eth1";}' | kubectl create -f -
