@@ -19,10 +19,19 @@ kubeadm-setup.sh up --apiserver-advertise-address 10.0.18.10
 kubeadm token list | awk 'NR==2 { print $1; }' > /vagrant/token
 openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //' > /vagrant/ca-cert-hash
 
-# create flannel script to replace the flannel pods
+# We are going to replace the flannel network pods.
 cat > flannel.sh <<EOF
 #!/bin/sh
-export KUBECONFIG=$(pwd)/admin.conf
-curl -sL https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml |sed "/kube-subnet-mgr/a\        - --iface=eth1" | kubectl replace -f -
+export KUBECONFIG=\$(pwd)/admin.conf
+# delete flannel resources
+kubectl delete configmap kube-flannel-cfg -n kube-system
+kubectl delete serviceaccount flannel -n kube-system
+kubectl delete clusterrolebinding flannel -n kube-system
+kubectl delete clusterrole flannel -n kube-system
+kubectl delete daemonset kube-flannel-ds -n kube-system
+# deploy flannel
+curl -sL https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml |awk '1;/kube-subnet-mgr/{ print "        - --iface=eth1";}' | kubectl create -f -
 EOF
 chmod +x flannel.sh
+# make it available from host OS
+cp -f flannel.sh /vagrant
